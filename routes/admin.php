@@ -93,10 +93,6 @@ Auth::routes(['register' => false]);
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
-Route::get('/quotation/list/details/{quotation_number}', [CategoryController::class, 'quotation_list_details'])->name('quotation.list.details');
-Route::get('/quotationc/list/details/{quotation_number}', [CategoryController::class, 'quotation_list_detailsc'])->name('quotationc.list.details');
-Route::get('/quotationc/list/liflet/{quotation_number}', [CategoryController::class, 'quotation_list_liflet'])->name('quotationc.list.liflet');
-Route::get('/quotation/list/prayer/{quotation_number}', [CategoryController::class, 'prayer_view_quotation'])->name('quotation.list.prayer.view');
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
 
@@ -110,18 +106,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     Route::post('/categories/featured', [CategoryController::class, 'updateFeatured'])->name('categories.featured');
 
 
-    //quotation routes start
-    Route::get('/quotation/home', [CategoryController::class, 'quotation_create'])->name('quotation.home');
-    Route::get('/quotation/list', [CategoryController::class, 'quotation_list'])->name('quotation.list');
-    Route::get('/quotation/list/delete/{quotation_number}', [CategoryController::class, 'delete_quotation'])->name('quotation.list.delete');
-    Route::get('/quotation/list/edit/{quotation_number}', [CategoryController::class, 'edit_quotation'])->name('quotation.list.edit');
-    Route::get('/quotation/search', [CategoryController::class, 'product_search'])->name('quotation.search');
-    Route::post('/quotation/store', [CategoryController::class, 'storeQuotaiton'])->name('quotation.storeQuotaiton');
-    Route::get('/quotation/list/details/{quotation_number}', [CategoryController::class, 'quotation_list_details'])->name('quotation.list.details');
-    Route::get('/quotation/list/duplicate/{quotation_number}', [CategoryController::class, 'duplicate_quotation'])->name('quotation.list.duplicate');
-    
-    
-    //quotation routes end
+
 
     //pos route start
     Route::get('/pos/dashboard',[CategoryController::class,'pos_dashboard'])->name('pos.dashboard');
@@ -156,102 +141,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
 
 
 
-     //delivery booking start
-     Route::get('/booking',[BookingController::class,'index'])->name('booking');
-     Route::post('/booking',[BookingController::class,'store'])->name('booking');
-     Route::get('/booking_list',[BookingController::class,'bookList'])->name('booking_list');
-     Route::get('/edit/{i}',[BookingController::class,'edit'])->name('edit');
-     Route::post('/update/{id}',[BookingController::class,'updatedata']);
-     Route::post('delete/{id}', [BookingController::class,'delete'])->name('delete');
-     Route::post('/book/search', [BookingController::class, 'Book_search'])->name('book.search'); //ajax path
+
 
      //test ajax
      Route::POST('/ajaxData',[BookingController::class,'getUserData']);
      Route::resource('/userData',BoookingController::class);
 
      //delivery booking end
-
-    // Report Route Start
-    Route::get('/summary_report',[CategoryController::class,'summary_report'])->name('summary.report');
-    Route::post('/summary_report/bydate',[CategoryController::class,'summary_report_by_date'])->name('summary.report.bydate');
-    Route::post('/summary_report/bymonth',[CategoryController::class,'summary_report_by_month'])->name('summary.report.bymonth');
-    Route::post('/summary_report/byyear',[CategoryController::class,'summary_report_by_year'])->name('summary.report.byyear');
-    Route::get('/product_sale_report',[CategoryController::class,'product_sale_report'])->name('product_sale.report');
-    Route::post('/product_sale_report_date_Wise',[CategoryController::class,'product_sale_report_report_wise'])->name('product_sale.report_date_wise');
-    Route::get('/stock_report',[CategoryController::class,'stock_report'])->name('stock_report');
-    Route::get('/cash_report',[CategoryController::class,'cash_report'])->name('cash_report');
-    Route::get('/metrics_report',[CategoryController::class,'metrics_report'])->name('metrics_report');
-    Route::get('/product_report_by_barcode',[CategoryController::class,'product_report_by_barocode'])->name('product.report_by_barocde');
-    Route::post('/product_report_by_barcode/match_serial',[CategoryController::class,'product_report_by_barocode_match_serial'])->name('report_by_barocde.match_serial');
-    // Report Route End
-
-    //Employee Manage Route start
-    Route::get('/employee_manage/attendance_generate_report_view',[EmployeeController::class,'attendence_report_generate_view'])->name('employee.attendance.report_generate_view');
-    Route::post('/employee_manage/attendance_generate_report_store',[EmployeeController::class,'attendence_report_generate_excell_store'])->name('employee.attendance.report_generate_store');
-    Route::get('/employee_manage/attendance_generate_report',[EmployeeController::class,'attendence_report_generate'])->name('employee.attendance.report_generate');
-    Route::post('/employee_manage/store_attendance_report_info',[EmployeeController::class,'store_attendence_report_info'])->name('employee.attendance.store_info');
-    Route::get('/employee_manage/attendance_list',[EmployeeController::class,'employee_attendence_list'])->name('employee.attendance.list');
-    Route::get('/employee_manage/attendance_print/{attendance_id}',[EmployeeController::class,'employee_attendence_print'])->name('employee.attendance.print');
-    Route::get('/employee_manage/attendance_edit/{attendance_id}',[EmployeeController::class,'employee_attendence_edit'])->name('employee.attendance.edit');
-    Route::post('/employee_manage/attendance_update/{attendance_id}',[EmployeeController::class,'employee_attendence_update'])->name('employee.attendance.update');
-    Route::get('/employee_manage/attendance_delete/{attendance_id}',[EmployeeController::class,'employee_attendence_delete'])->name('employee.attendance.delete');
-    Route::get('/employee_manage/automate_attendance',[EmployeeController::class,'automate_attendance'])->name('employee.automate_attendance');
-    Route::post('/employee_manage/automate_attendance_generate',[EmployeeController::class,'automate_attendance_generate'])->name('employee.automate_attendance_generate');
-    Route::get('/employee_manage/automate_attendance_show',[EmployeeController::class,'automate_attendance_show'])->name('employee.automate_attendance_show');
-    Route::get('/employee_manage/automate_attendance_list',[EmployeeController::class,'automate_attendance_list'])->name('employee.automate_attendance.list');
-    Route::get('/employee_manage/automate_attendance_edit/{user_id}/{year}/{month}',[EmployeeController::class,'automate_attendance_edit'])->name('employee.automate_attendance.edit');
-    Route::get('/employee_manage/automate_attendance_delete/{user_id}/{year}/{month}',[EmployeeController::class,'automate_attendance_delete'])->name('employee.automate_attendance.delete');
-    Route::post('/employee_manage/automate_attendance_store_edited_in_out_time_data',[EmployeeController::class,'automate_attendance_store_edited_in_out_time_data'])->name('employee.automate_attendance.store_edited_in_out_time_data');
-    Route::get('/employee_manage/automate_attendance_generate_salary/{user_id}/{year}/{month}',[EmployeeController::class,'automate_attendance_generate_salary'])->name('employee.automate_attendance.generate_salary');
-    Route::post('/employee_manage/automate_attendance_generate_salary_store',[EmployeeController::class,'automate_attendance_generate_salary_store'])->name('employee.automate_attendance.generate_salary.store');
-    Route::get('/employee_manage/automate_attendance_print/{user_id}/{year}/{month}',[EmployeeController::class,'automate_attendance_print'])->name('employee.automate_attendance.print');
-    Route::get('/employee_manage/employee_panel_list',[EmployeeController::class,'employee_panel_list'])->name('employee.employee_panel.list');
-    Route::get('/employee_manage/employee_panel_edit/{id}',[EmployeeController::class,'employee_panel_edit'])->name('employee.employee_panel.edit');
-    Route::post('/employee_manage/employee_panel_update',[EmployeeController::class,'employee_panel_update'])->name('employee.employee_panel.update');
-    Route::get('/employee_manage/employee_current_attendance_data',[EmployeeController::class,'employee_current_attendance_data'])->name('employee.employee_current_attendance.data');
-    Route::get('/employee_manage/employee_current_attendance_details/{user_id}/{year}/{month}',[EmployeeController::class,'employee_current_attendance_details'])->name('employee.automate_current_attendance.details');
-
-    //Manage Payslip
-    Route::get('/manage_payslip/create/{user_id}/{year}/{month}',[EmployeeController::class,'payslip_create'])->name('payslip.create');
-    Route::get('/manage_payslip/edit/{user_id}/{year}/{month}',[EmployeeController::class,'payslip_edit'])->name('payslip.edit');
-    Route::post('/manage_payslip/store',[EmployeeController::class,'payslip_store'])->name('payslip.store');
-    Route::post('/manage_payslip/store/{user_id}/{year}/{month}',[EmployeeController::class,'payslip_update'])->name('payslip.update');
-    Route::get('/manage_payslip/print/{user_id}/{year}/{month}',[EmployeeController::class,'payslip_print'])->name('payslip.print');
-
-    Route::get('/udpate_attendance_data_to_server',[EmployeeController::class,'udpate_attendance_data']);
-    //Employee Manage Route End
-
-    //Email system Panel start
-    Route::get('/email_system/email_system_view',[EmailSystemController::class,'email_system_view'])->name('email_system.view');
-    Route::post('/email_system/user_email_info_store',[EmailSystemController::class,'user_email_info_store'])->name('email_system.user_email_info.store');
-    Route::get('/email_system/user_email_info_list',[EmailSystemController::class,'user_email_info_list'])->name('email_system.user_email_info.list');
-    Route::post('/email_system/sent_single_mail',[EmailSystemController::class,'send_single_mail'])->name('email_system.user_email_info.singlemail');
-    Route::get('/email_system/single_mail_write_body/{customer_email}',[EmailSystemController::class,'send_single_mail_write_body'])->name('email_system.singlemail_write_body');
-    Route::post('/email_system/save_temporary_email',[EmailSystemController::class,'save_temporary_email'])->name('email_system.save_temporary_email');
-    Route::get('/email_system/multiple_mail_write_body',[EmailSystemController::class,'multiple_mail_write_body'])->name('email_system.multiple_write_body');
-    Route::post('/email_system/sent_multiple_mail',[EmailSystemController::class,'send_multiple_mail'])->name('email_system.send_multiple_email');
-    Route::get('/email_system/template_mail_body/{customer_email}',[EmailSystemController::class,'template_single_mail_body'])->name('email_system.template_single_body');
-    Route::post('/email_system/send_template_mail_body',[EmailSystemController::class,'send_template_single_mail_body'])->name('email_system.send_template_single_body');
-    Route::get('/email_system/choose_mail_type_body',[EmailSystemController::class,'choose_email_type_body'])->name('email_system.choose_email_type');
-    Route::get('/email_system/multiple_template_mail_write_body',[EmailSystemController::class,'multiple_template_mail_write_body'])->name('email_system.multiple_template_mail_write_body');
-    Route::post('/email_system/send_multiple_template_mail',[EmailSystemController::class,'send_multiple_template_mail'])->name('email_system.send_multiple_template_mail');
-
-    //Email system panel end
-
-    //SMS system panel start
-     Route::get('/sms_system/sms_system_view',[SmsPanelController::class,'customer_information_list_sms_view'])->name('customer_info_list_sms.view');
-     Route::get('/sms_system/single_sms_body/{customer_mobile_number}',[SmsPanelController::class,'single_sms_body_view'])->name('single_sms_body.view');
-     Route::post('/sms_system/send_single_sms',[SmsPanelController::class,'send_signle_sms'])->name('single_sms.send');
-     Route::get('/sms_system/choose_sms_receiver',[SmsPanelController::class,'choose_sms_receiver_view'])->name('choose_sms_receiver.view');
-     Route::post('/sms_system/store_temporary_sms_number',[SmsPanelController::class,'store_temporary_sms_number'])->name('temporary_sms_number.store');
-     Route::post('/sms_system/send_multiple_sms',[SmsPanelController::class,'send_multiple_sms'])->name('multiple_sms.send');
-     Route::get('/sms_system/mulitple_sms_body',[SmsPanelController::class,'send_multiple_sms_body_view'])->name('multiple_sms_body.view');
-     Route::get('/sms_system/sms_sending_report',[SmsPanelController::class,'sms_sending_report'])->name('sms_sending.report');
-     Route::post('/sms_system/sms_sending_date_wise_report',[SmsPanelController::class,'sms_sending_date_wise_report'])->name('sms_sending_report.date_wise');
-     Route::post('/sms_system/sms_sending_month_wise_report',[SmsPanelController::class,'sms_sending_month_wise_report'])->name('sms_sending_report.month_wise');
-   
-    //SMS system panel end
-
 
 
     Route::resource('brands', BrandController::class);
@@ -328,35 +224,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
 
         Route::get('/crm_user_search',[CRMController::class,'crm_user_search'])->name("customer_crm.user_search");
         Route::get('/crm_user_search/search/bydate',[CRMController::class,'customer_crm_search_by_date'])->name("customer_crm.search_by_date");
-        Route::get('/marketing_followup/commented_clients_view',[CRMController::class,'marketing_followup_commented_clients_view'])->name("marketing_followup.commented_clients");
-        Route::get('/marketing_followup/comments_view',[CRMController::class,'marketing_followup_comments_view'])->name("marketing_followup.comments");
-        Route::get('/marketing_followup/reminders_view',[CRMController::class,'marketing_followup_reminders_view'])->name("marketing_followup.reminders");
-        Route::get('/marketing_followup/getting_data_view_modal',[CRMController::class,'getting_data_view_modal'])->name("marketing_followup.getting_data_view_modal");
-        Route::post('/marketing_followup/delete_comments',[CRMController::class,'delete_comments'])->name("marketing_followup.delete_comments");
-        Route::get('/marketing_followup/getting_comments_view',[CRMController::class,'getting_comments_view'])->name("marketing_followup.getting_comments_view");
-        Route::post('/marketing_followup/update_comments',[CRMController::class,'update_comments'])->name("marketing_followup.update_comments");
-        Route::post('/marketing_followup/add_comment',[CRMController::class,'add_comment_from_modal'])->name("marketing_followup.add_comment");
-        Route::get('/marketing_followup/customer_profile_view',[CRMController::class,'customer_profile_view'])->name("marketing_followup.customer_profile_view");
-        Route::get('/marketing_followup/getting_reminder_data',[CRMController::class,'getting_reminder_data'])->name("marketing_followup.getting_reminder_data");
-        Route::post('/marketing_followup/update_reminder',[CRMController::class,'update_reminder'])->name("marketing_followup.update_reminder");
-        Route::post('/marketing_followup/delete_reminder',[CRMController::class,'delete_reminder'])->name("marketing_followup.delete_reminder");
-        Route::get('/marketing_followup/view_reminder',[CRMController::class,'view_reminder'])->name("marketing_followup.view_reminder");
+    
         
         //======== CRM Routes End ========
 
-        //======== CRM Report Routes Start ========
-
-        Route::get('/crm_report',[CrmReport::class,'index'])->name("crm_report.view");
-        Route::post('/crm_add_report',[CrmReport::class,'crm_add_report'])->name("crm_report.add_report");
-        Route::get('/crm_report_view',[CrmReport::class,'crm_report_view'])->name("crm_report.view_all");
-        Route::get('/crm_report_edit',[CrmReport::class,'crm_report_edit'])->name("crm_report.edit");
-        Route::post('/crm_report_delete',[CrmReport::class,'crm_report_delete'])->name("crm_report.delete");
-        Route::post('/crm_report_update',[CrmReport::class,'crm_report_update'])->name("crm_report.update_report");
-        Route::get('/crm_report_print',[CrmReport::class,'crm_report_print'])->name("crm_report.print_report");
-        Route::get('/crm_report_print_view',[CrmReport::class,'crm_report_print_view'])->name("crm_report.print_view");
-        Route::get('/user_name_view',[CrmReport::class,'user_name_view'])->name("crm_report.user_name_view");
-
-        //======== CRM Report Routes end ========
+        
 
          //======== CRM Routes start by yeasin ========
          Route::get('/customer_marketing/crm/list',[CRMController::class,'customer_marketing_crm_list'])->name("customer_marketing_crm.list");
@@ -517,13 +389,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     Route::get('/orders/return_products/list_delete', [OrderController::class, 'return_product_list_delete'])->name('orders.return_product_list_delete');
     Route::get('/orders/cancel_cause/list', [OrderController::class, 'order_cancel_list'])->name('orders.cancel_list');
     Route::post('/orders/cancel_cause/search_by_date', [OrderController::class, 'order_cancel_search_by_date'])->name('orders.cancel_search_by_date');
-    //user history route start
-    Route::post('/user_history/order/adv_payment', [CategoryController::class, 'advance_paymnet_history'])->name('user_history.orders.adv_payment');
-    Route::post('/user_history/order/payment_status', [CategoryController::class, 'order_payment_status_history'])->name('user_history.orders.payment_status');
-    Route::post('/user_history/order/delivery_status', [CategoryController::class, 'order_delivery_status_history'])->name('user_history.orders.delivery_status');
-    Route::post('/user_history/order/shipment_cost', [CategoryController::class, 'order_shipment_cost_history'])->name('user_history.orders.shipment_cost');
-    Route::get('/user_history/list', [CategoryController::class, 'user_history_list'])->name('user_history.list');
-    Route::post('/user_history/list/by_date', [CategoryController::class, 'user_history_list_by_date'])->name('user_history_date.list');
+    
     
     //user edit history within product controller update method
     //user history route end
