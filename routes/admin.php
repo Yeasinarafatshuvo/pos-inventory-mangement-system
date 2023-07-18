@@ -390,6 +390,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     Route::get('/orders/cancel_cause/list', [OrderController::class, 'order_cancel_list'])->name('orders.cancel_list');
     Route::post('/orders/cancel_cause/search_by_date', [OrderController::class, 'order_cancel_search_by_date'])->name('orders.cancel_search_by_date');
     
+    //user history route start
+    Route::post('/user_history/order/adv_payment', [CategoryController::class, 'advance_paymnet_history'])->name('user_history.orders.adv_payment');
+    Route::post('/user_history/order/payment_status', [CategoryController::class, 'order_payment_status_history'])->name('user_history.orders.payment_status');
+    Route::post('/user_history/order/delivery_status', [CategoryController::class, 'order_delivery_status_history'])->name('user_history.orders.delivery_status');
+    Route::post('/user_history/order/shipment_cost', [CategoryController::class, 'order_shipment_cost_history'])->name('user_history.orders.shipment_cost');
+    Route::get('/user_history/list', [CategoryController::class, 'user_history_list'])->name('user_history.list');
+    Route::post('/user_history/list/by_date', [CategoryController::class, 'user_history_list_by_date'])->name('user_history_date.list');
+    
     
     //user edit history within product controller update method
     //user history route end

@@ -24,7 +24,6 @@ use App\Models\PurchaseDetail;
 use App\Models\PurchaseReturn;
 use App\Models\UserHistory;
 use App\Models\MoneyReceipt;
-use App\Models\MoneyPayment;
 use Illuminate\Support\Facades\Auth;
 use \Crypt;
 use DB;
@@ -493,22 +492,7 @@ public function create_order(Request $request)
    $combined_orders->grand_total = $request->grand_total;
    $combined_orders->save();
 
-           // SMS integration Start
-           $token = "7866132738dca110e68e8b7cbc10e238a12c992211";
-           $url = "http://api.greenweb.com.bd/api.php";
-           $message = "Maakview order ".$combined_orders->code." Placed from POS.";
-           $data= array(
-           'to'=>"+8801715448159",
-           'message'=>"$message",
-           'token'=>"$token"
-           ); 
-           $ch = curl_init(); 
-           curl_setopt($ch, CURLOPT_URL,$url);
-           curl_setopt($ch, CURLOPT_ENCODING, '');
-           curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-           curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-           $smsresult = curl_exec($ch);
-           // SMS integration End
+   
     //order table
     $Order_instance = new Order();
     $Order_instance->user_id = $request->customer_id;
@@ -1146,100 +1130,7 @@ public function due_payment(Request $request)
 
 }
 
-public function supplier_payment_receipt_create($invoice_number)
-{
-    $purchase_invoice_number = $invoice_number;
-    return view('backend.orders.supplier_payment_receipt_create', compact('purchase_invoice_number'));
-}
 
-public function supplier_payment_receipt_store(Request $request)
-{
-    
-     //validation 
-     $validatedData = $request->validate([
-        'order_invoice' => 'required',
-        'total_payment_in_number' => 'required',
-        'total_payment_in_word' => 'required',
-        'maakview_checque_number' => 'required',
-        'bill_info' => 'required'
-    ]);
-    
-   
-    if($validatedData){
-        $instance_of_money_payment = new MoneyPayment();
-        $instance_of_money_payment->order_invoice = $request->order_invoice;
-        $instance_of_money_payment->total_payment_in_number = $request->total_payment_in_number;
-        $instance_of_money_payment->maakview_account_name = $request->maakview_account_name;
-        $instance_of_money_payment->total_payment_in_word = $request->total_payment_in_word;
-        $instance_of_money_payment->maakview_checque_number = $request->maakview_checque_number;
-        $instance_of_money_payment->maakview_cheque_date = $request->maakview_cheque_date;
-        $instance_of_money_payment->bill_info = $request->bill_info;
-        $save_money_receipt = $instance_of_money_payment->save();
-
-        if($save_money_receipt){
-             //save money payment status in purchase details table
-             PurchaseDetail::where('invoice_numbers',$request->order_invoice)->update([
-                'create_money_payment' => 1
-            ]);
-
-            return  redirect()->route('orders.purchase_order.home');
-        }
-
-
-    }
-
-    
-
-}
-
-public function supplier_payment_receipt_edit($invoice_number)
-{
-    $purchase_invoice_number = $invoice_number;
-    $supplier_payment_receipt_data = MoneyPayment::where('order_invoice', $purchase_invoice_number)->first();
-    return view('backend.orders.supplier_payment_receipt_edit', compact('purchase_invoice_number', 'supplier_payment_receipt_data'));
-
-}
-
-public function supplier_payment_receipt_update(Request $request, $invoice_number)
-{
-
-     //validation 
-     $validatedData = $request->validate([
-        'order_invoice' => 'required',
-        'total_payment_in_number' => 'required',
-        'total_payment_in_word' => 'required',
-        'maakview_checque_number' => 'required',
-        'bill_info' => 'required'
-    ]);
-
-    if($validatedData){
-        MoneyPayment::where('order_invoice', $invoice_number)->update([
-            'order_invoice' => $request->order_invoice,
-            'total_payment_in_number' => $request->total_payment_in_number,
-            'maakview_account_name' => $request->maakview_account_name,
-            'total_payment_in_word' => $request->total_payment_in_word,
-            'maakview_checque_number' => $request->maakview_checque_number,
-            'maakview_cheque_date' => $request->maakview_cheque_date,
-            'bill_info' => $request->bill_info
-        ]);
-        return  redirect()->route('orders.purchase_order.home');
-    }
-}
-
-public function supplier_payment_receipt_print($invoice_number)
-{
-    $supplier_money_payment_data = MoneyPayment::where('order_invoice', $invoice_number)->first();
-    $get_supplier_id = PurchaseDetail::select('supplier_id', 'created_at')->where('invoice_numbers', $invoice_number)->first();
-    $user_name = 'Not Found';
-    $get_supplier_name =  User::select('name')->where('id', $get_supplier_id->supplier_id)->first();
-    if($get_supplier_name != null){
-        $user_name = $get_supplier_name->name;
-    }
-    $purchase_created_date = $get_supplier_id->created_at;
-    
-
-    return view('backend.invoices.supplier_money_payment_print', compact('supplier_money_payment_data', 'user_name','purchase_created_date'));
-}
 
 public function purchase_order_delete(Request $request)
 {
@@ -1461,6 +1352,127 @@ public function money_receipt_print($invoice_number)
 
 
 //end create order money receipt
+
+//start user history 
+public function advance_paymnet_history(Request $request)
+{
+    if($request->ajax())
+    {
+        $combined_order_id = CombinedOrder::select('id')->where('code', $request->order_id)->first();
+        $previous_advance_payment = Order::select('advance_payment')->where('combined_order_id', $combined_order_id->id)->first();
+       
+        if($previous_advance_payment->advance_payment != $request->advance_payment)
+        {
+            
+            $adv_payment = array('adv_payment'=>$request->advance_payment);
+            $user_history_instance = new UserHistory();        
+            $user_history_instance->user_id = Auth::id();
+            $user_history_instance->user_action = "Advance payment";
+            $user_history_instance->invoice_id = $request->order_id;
+            $user_history_instance->change_information = json_encode($adv_payment);
+            $save_user_history = $user_history_instance->save();
+            if($save_user_history)
+            {
+                return response()->json([
+                    'status' => 200,
+                ]);
+            }
+        }
+        
+
+    }
+
+}
+
+public function order_payment_status_history(Request $request)
+{
+    if($request->ajax())
+    {
+        $combined_order_id =  Order::select('combined_order_id')->where('id',$request->order_id)->first();
+        $invoice_number = CombinedOrder::select('code')->where('id',$combined_order_id->combined_order_id)->first();
+        $payment_status = array('payment_status'=>$request->status);
+        $user_history_instance = new UserHistory();
+        $user_history_instance->user_id = Auth::id();
+        $user_history_instance->user_action = "payment status";
+        $user_history_instance->invoice_id = $invoice_number->code;
+        $user_history_instance->change_information = json_encode($payment_status);
+        $save_user_history = $user_history_instance->save();
+        if($save_user_history)
+        {
+            return response()->json([
+                'status' => 200,
+            ]);
+        }
+        
+    }
+}
+
+public function order_delivery_status_history(Request $request)
+{
+    if($request->ajax())
+    {
+        $combined_order_data =  Order::select('combined_order_id')->where('id',$request->order_id)->first();
+        $invoice_number = CombinedOrder::select('code')->where('id',$combined_order_data->combined_order_id)->first();
+        
+        $delivery_status = array('delivery_status'=>$request->status);
+        $user_history_instance = new UserHistory();
+        $user_history_instance->user_id = Auth::id();
+        $user_history_instance->user_action = "delivery status";
+        $user_history_instance->invoice_id = $invoice_number->code;
+        $user_history_instance->change_information = json_encode($delivery_status);
+        $save_user_history = $user_history_instance->save();
+        if($save_user_history)
+        {
+            return response()->json([
+                'status' => 200,
+            ]);
+        }
+    }
+}
+
+public function order_shipment_cost_history(Request $request)
+{
+    if($request->ajax())
+    {
+        $previous_shipping_cost = Order::select('shipping_cost')->where('combined_order_id',$request->combined_order_id)->first();
+        $invoice_number = CombinedOrder::select('code')->where('id',$request->combined_order_id)->first();
+
+        if($previous_shipping_cost->shipping_cost != $request->shipment_cost_value)
+        {
+            $shipment_cost = array('shipment_cost'=>$request->shipment_cost_value);
+            $user_history_instance = new UserHistory();
+            $user_history_instance->user_id = Auth::id();
+            $user_history_instance->user_action = "Shipping cost update";
+            $user_history_instance->invoice_id = $invoice_number->code;
+            $user_history_instance->change_information = json_encode($shipment_cost);
+            $save_user_history = $user_history_instance->save();
+            if($save_user_history)
+            {
+                return response()->json([
+                    'status' => 200,
+                ]);
+            }
+           
+        }
+    }
+}
+
+public function user_history_list()
+{
+    $user_all_history = UserHistory::orderBy('id', 'DESC')->get();
+    return view('backend.history.user_history_list', compact('user_all_history'));
+}
+
+public function user_history_list_by_date(Request $request)
+{
+    $start_date = $request->start_date;
+    $end_date = $request->end_date;
+    
+    $user_all_history = UserHistory::where(DB::raw('CAST(created_at as date)'), '<=', $end_date)->where(DB::raw('CAST(created_at as date)'), '>=', $start_date)->get();
+    return view('backend.history.user_history_by_date', compact('user_all_history', 'start_date', 'end_date'));
+}
+
+//end user history
 
 
 

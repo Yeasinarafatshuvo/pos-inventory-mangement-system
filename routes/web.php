@@ -37,8 +37,7 @@ Route::get('/category/{slug}', [HomeController::class,'index'])->name('products.
 Route::get('/', [HomeController::class,'index'])->name('home');
 Route::get('{slug}', [HomeController::class,'index'])->where('slug','.*');
 
-// Route::get('/demo/cron_1', 'DemoController@cron_1');
-// Route::get('/demo/cron_2', 'DemoController@cron_2');
+
 
 Route::get('/booking/new',[BookingControler::class,'index']);
 

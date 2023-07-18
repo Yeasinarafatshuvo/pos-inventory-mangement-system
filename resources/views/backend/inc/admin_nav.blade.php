@@ -88,35 +88,8 @@ button.bg-light:hover {
     </div>
     <div class="d-flex justify-content-between align-items-stretch flex-grow-xl-1">
         <div class="d-none d-md-flex justify-content-around align-items-center align-items-stretch">
-            <div class="aiz-topbar-item align-items-center">
-                <a class="btn btn-outline-secondary border-gray-300 d-flex align-items-center px-3" href="{{ route('home')}}" target="_blank">
-                    <i class="las la-globe opacity-60"></i>
-                    <span class="fw-500 fs-13 ml-2 mr-0 opacity-60">{{ translate('Browse Website') }}</span>
-                </a>
-            </div>
-            <div class="aiz-topbar-item align-items-center dropdown ml-3 mr-0 ">
-                <a class="btn btn-outline-secondary border-gray-300 d-flex align-items-center px-3" href="javascript:void(0);" data-toggle="dropdown">
-                    <i class="las la-plus ts-08 opacity-60"></i>                            
-                    <span class="fw-500 fs-13 ml-2 mr-0 opacity-60">{{ translate('Add New') }}</span>
-                </a>
-                <div class="dropdown-menu p-3">
-                    <ul class="list-group list-group-raw text-capitalize">
-                        <li class="list-group-item p-2">
-                            <a href="{{ route('product.create') }}" class="text-reset fs-14 opacity-60">{{ translate('Add new product') }}</a>
-                        </li>
-                        <li class="list-group-item p-2">
-                            <a href="{{ route('coupon.create') }}" class="text-reset fs-14 opacity-60">{{ translate('Add new coupon') }}</a>
-                        </li>
-                        <li class="list-group-item p-2">
-                            <a href="{{ route('offers.create') }}" class="text-reset fs-14 opacity-60">{{ translate('Add New Offer') }}</a>
-                        </li>
-                        <li class="list-group-item p-2">
-                            <a href="{{ route('staffs.create') }}" class="text-reset fs-14 opacity-60">{{ translate('Add New Staff') }}</a>
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
+            
+            
         </div>
         <div class="d-flex justify-content-around align-items-center align-items-stretch">
             {{-- <div class="aiz-topbar-item ml-2">
@@ -143,15 +116,7 @@ button.bg-light:hover {
                     </div>
                 </div>
             </div> --}}
-            {{-- Notification Section Start--}}
-            <div class="notifier new my-3 mr-3">
-                <button type="button" class="border-0 bg-light" >
-                    <i class="fa fa-bell" style="font-size:36px" id="reminder_button"></i>
-                    <div class="badge">19</div>
-                </button>
-
-              </div>
-            {{-- Notification Section End--}}
+           
             <!-- language -->
             @php
                 if(Session::has('locale')){
@@ -164,12 +129,7 @@ button.bg-light:hover {
             @endphp
             <div class="aiz-topbar-item ml-3 mr-0">
                 <div class="align-items-center d-flex dropdown" id="lang-change">
-                    <a class="dropdown-toggle no-arrow" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="false" aria-expanded="false">
-                        <span class="btn btn btn-outline-secondary border-gray-300 px-3 px-md-4">
-                            <img src="{{ static_asset('assets/img/flags/'.$language->flag.'.png') }}" height="11">
-                            <span class="fw-500 fs-13 ml-2 mr-0 opacity-60  d-none d-md-inline-block">{{ $language->name }}</span>
-                        </span>
-                    </a>
+                   
                     <ul class="dropdown-menu dropdown-menu-right dropdown-menu-xs">
 
                         @foreach (\App\Models\Language::all() as $key => $language)
