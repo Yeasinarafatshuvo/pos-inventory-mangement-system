@@ -292,13 +292,7 @@ input:checked + .slider .off
                                             <i class="las la-eye"></i>
                                         </a>
                                     @endcan
-                                    @can('invoice_download')
-                                        <a class="btn btn-soft-success btn-icon btn-circle btn-sm"
-                                            title="{{ translate('Print Invoice') }}" href="javascript:void(0)"
-                                            onclick="print_invoice('{{ route('orders.invoice.print', $order->id) }}')">
-                                            <i class="las la-print"></i>
-                                        </a>
-                                    @endcan
+                                   
                                     @can('invoice_download')
                                         <a class="btn btn-soft-success btn-icon btn-circle btn-sm"
                                             title="{{ translate('Print Common Invoice') }}" href="javascript:void(0)"
